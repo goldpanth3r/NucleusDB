@@ -76,16 +76,43 @@ std::vector<Token> Lexer::tokenize() {
             continue;
         }
 
-        // Read a semicolon.
-        if (current == ';') {
-            tokens.emplace_back(TokenType::SEMICOLON, ";");
-            ++position_;
-            continue;
+        // Read operators and parentheses.
+        switch (current) {
+            case '+':
+                tokens.emplace_back(TokenType::PLUS, "+");
+                break;
+
+            case '-':
+                tokens.emplace_back(TokenType::MINUS, "-");
+                break;
+
+            case '*':
+                tokens.emplace_back(TokenType::STAR, "*");
+                break;
+
+            case '/':
+                tokens.emplace_back(TokenType::SLASH, "/");
+                break;
+
+            case '(':
+                tokens.emplace_back(TokenType::LPAREN, "(");
+                break;
+
+            case ')':
+                tokens.emplace_back(TokenType::RPAREN, ")");
+                break;
+
+            case ';':
+                tokens.emplace_back(TokenType::SEMICOLON, ";");
+                break;
+
+            default:
+                throw std::runtime_error(
+                    std::string("Unexpected character: ") + current
+                );
         }
 
-        throw std::runtime_error(
-            std::string("Unexpected character: ") + current
-        );
+        ++position_;
     }
 
     // Add EOF token.
