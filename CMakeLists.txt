@@ -29,6 +29,8 @@ enable_testing()
 
 add_executable(nucleusdb_tests
     tests/lexer/token_test.cpp
+    tests/lexer/lexer_test.cpp
+    src/lexer/lexer.cpp
 )
 
 target_link_libraries(nucleusdb_tests

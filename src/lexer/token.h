@@ -5,6 +5,7 @@
 
 namespace nucleusdb {
 
+// Token types.
 enum class TokenType {
     SELECT,
 
@@ -22,6 +23,7 @@ enum class TokenType {
     END_OF_FILE
 };
 
+// A SQL token.
 struct Token {
     TokenType type;
     std::string lexeme;
@@ -30,4 +32,4 @@ struct Token {
         : type(type), lexeme(std::move(lexeme)) {}
 };
 
-} // namespace nucleusdb
+}
