@@ -1,4 +1,5 @@
 #include <gtest/gtest.h>
+#include <stdexcept>
 
 #include "lexer/lexer.h"
 
@@ -133,6 +134,168 @@ TEST(LexerTest, TokenizesWhere) {
     EXPECT_EQ(tokens[9].lexeme, "");
 }
 
+// Tokenize EQUAL.
+TEST(LexerTest, TokenizesEqual) {
+    Lexer lexer("SELECT age = 18;");
+
+    auto tokens = lexer.tokenize();
+
+    ASSERT_EQ(tokens.size(), 6);
+
+    EXPECT_EQ(tokens[0].type, TokenType::SELECT);
+    EXPECT_EQ(tokens[0].lexeme, "SELECT");
+
+    EXPECT_EQ(tokens[1].type, TokenType::IDENTIFIER);
+    EXPECT_EQ(tokens[1].lexeme, "age");
+
+    EXPECT_EQ(tokens[2].type, TokenType::EQUAL);
+    EXPECT_EQ(tokens[2].lexeme, "=");
+
+    EXPECT_EQ(tokens[3].type, TokenType::INTEGER);
+    EXPECT_EQ(tokens[3].lexeme, "18");
+
+    EXPECT_EQ(tokens[4].type, TokenType::SEMICOLON);
+    EXPECT_EQ(tokens[4].lexeme, ";");
+
+    EXPECT_EQ(tokens[5].type, TokenType::END_OF_FILE);
+    EXPECT_EQ(tokens[5].lexeme, "");
+}
+
+// Tokenize LESS_EQUAL.
+TEST(LexerTest, TokenizesLessEqual) {
+    Lexer lexer("SELECT age <= 65;");
+
+    auto tokens = lexer.tokenize();
+
+    ASSERT_EQ(tokens.size(), 6);
+
+    EXPECT_EQ(tokens[0].type, TokenType::SELECT);
+    EXPECT_EQ(tokens[0].lexeme, "SELECT");
+
+    EXPECT_EQ(tokens[1].type, TokenType::IDENTIFIER);
+    EXPECT_EQ(tokens[1].lexeme, "age");
+
+    EXPECT_EQ(tokens[2].type, TokenType::LESS_EQUAL);
+    EXPECT_EQ(tokens[2].lexeme, "<=");
+
+    EXPECT_EQ(tokens[3].type, TokenType::INTEGER);
+    EXPECT_EQ(tokens[3].lexeme, "65");
+
+    EXPECT_EQ(tokens[4].type, TokenType::SEMICOLON);
+    EXPECT_EQ(tokens[4].lexeme, ";");
+
+    EXPECT_EQ(tokens[5].type, TokenType::END_OF_FILE);
+    EXPECT_EQ(tokens[5].lexeme, "");
+}
+
+// Tokenize GREAT_EQUAL.
+TEST(LexerTest, TokenizesComparisonOperators) {
+    Lexer lexer("SELECT age >= 18;");
+
+    auto tokens = lexer.tokenize();
+
+    ASSERT_EQ(tokens.size(), 6);
+
+    EXPECT_EQ(tokens[0].type, TokenType::SELECT);
+    EXPECT_EQ(tokens[0].lexeme, "SELECT");
+
+    EXPECT_EQ(tokens[1].type, TokenType::IDENTIFIER);
+    EXPECT_EQ(tokens[1].lexeme, "age");
+
+    EXPECT_EQ(tokens[2].type, TokenType::GREATER_EQUAL);
+    EXPECT_EQ(tokens[2].lexeme, ">=");
+
+    EXPECT_EQ(tokens[3].type, TokenType::INTEGER);
+    EXPECT_EQ(tokens[3].lexeme, "18");
+
+    EXPECT_EQ(tokens[4].type, TokenType::SEMICOLON);
+    EXPECT_EQ(tokens[4].lexeme, ";");
+
+    EXPECT_EQ(tokens[5].type, TokenType::END_OF_FILE);
+    EXPECT_EQ(tokens[5].lexeme, "");
+}
+
+// Tokenize LESS.
+TEST(LexerTest, TokenizesLessAndNotEqual) {
+    Lexer lexer("SELECT age < 65;");
+
+    auto tokens = lexer.tokenize();
+
+    ASSERT_EQ(tokens.size(), 6);
+
+    EXPECT_EQ(tokens[0].type, TokenType::SELECT);
+    EXPECT_EQ(tokens[0].lexeme, "SELECT");
+
+    EXPECT_EQ(tokens[1].type, TokenType::IDENTIFIER);
+    EXPECT_EQ(tokens[1].lexeme, "age");
+
+    EXPECT_EQ(tokens[2].type, TokenType::LESS);
+    EXPECT_EQ(tokens[2].lexeme, "<");
+
+    EXPECT_EQ(tokens[3].type, TokenType::INTEGER);
+    EXPECT_EQ(tokens[3].lexeme, "65");
+
+    EXPECT_EQ(tokens[4].type, TokenType::SEMICOLON);
+    EXPECT_EQ(tokens[4].lexeme, ";");
+
+    EXPECT_EQ(tokens[5].type, TokenType::END_OF_FILE);
+    EXPECT_EQ(tokens[5].lexeme, "");
+}
+
+// Tokenize GREATER.
+TEST(LexerTest, TokenizesLessAndNotEqual) {
+    Lexer lexer("SELECT age > 65;");
+
+    auto tokens = lexer.tokenize();
+
+    ASSERT_EQ(tokens.size(), 6);
+
+    EXPECT_EQ(tokens[0].type, TokenType::SELECT);
+    EXPECT_EQ(tokens[0].lexeme, "SELECT");
+
+    EXPECT_EQ(tokens[1].type, TokenType::IDENTIFIER);
+    EXPECT_EQ(tokens[1].lexeme, "age");
+
+    EXPECT_EQ(tokens[2].type, TokenType::GREATER);
+    EXPECT_EQ(tokens[2].lexeme, ">");
+
+    EXPECT_EQ(tokens[3].type, TokenType::INTEGER);
+    EXPECT_EQ(tokens[3].lexeme, "65");
+
+    EXPECT_EQ(tokens[4].type, TokenType::SEMICOLON);
+    EXPECT_EQ(tokens[4].lexeme, ";");
+
+    EXPECT_EQ(tokens[5].type, TokenType::END_OF_FILE);
+    EXPECT_EQ(tokens[5].lexeme, "");
+}
+
+// Tokenize NOT_EQUAL.
+TEST(LexerTest, TokenizesNotEqual) {
+    Lexer lexer("SELECT age != 18;");
+
+    auto tokens = lexer.tokenize();
+
+    ASSERT_EQ(tokens.size(), 6);
+
+    EXPECT_EQ(tokens[0].type, TokenType::SELECT);
+    EXPECT_EQ(tokens[0].lexeme, "SELECT");
+
+    EXPECT_EQ(tokens[1].type, TokenType::IDENTIFIER);
+    EXPECT_EQ(tokens[1].lexeme, "age");
+
+    EXPECT_EQ(tokens[2].type, TokenType::NOT_EQUAL);
+    EXPECT_EQ(tokens[2].lexeme, "!=");
+
+    EXPECT_EQ(tokens[3].type, TokenType::INTEGER);
+    EXPECT_EQ(tokens[3].lexeme, "18");
+
+    EXPECT_EQ(tokens[4].type, TokenType::SEMICOLON);
+    EXPECT_EQ(tokens[4].lexeme, ";");
+
+    EXPECT_EQ(tokens[5].type, TokenType::END_OF_FILE);
+    EXPECT_EQ(tokens[5].lexeme, "");
+}
+
 // Tokenize operators and parentheses.
 TEST(LexerTest, TokenizesOperators) {
     Lexer lexer("SELECT (12 + 35) * 2;");
@@ -170,4 +333,25 @@ TEST(LexerTest, TokenizesOperators) {
 
     EXPECT_EQ(tokens[9].type, TokenType::END_OF_FILE);
     EXPECT_EQ(tokens[9].lexeme, "");
+}
+
+// Reject an unknown character.
+TEST(LexerTest, RejectsUnknownCharacter) {
+    Lexer lexer("SELECT @;");
+
+    EXPECT_THROW(lexer.tokenize(), std::runtime_error);
+}
+
+// Reject an unknown word.
+TEST(LexerTest, RejectsUnknownWord) {
+    Lexer lexer("INVALID 42;");
+
+    EXPECT_THROW(lexer.tokenize(), std::runtime_error);
+}
+
+// Reject an unterminated string.
+TEST(LexerTest, RejectsUnterminatedString) {
+    Lexer lexer("SELECT 'Alice;");
+
+    EXPECT_THROW(lexer.tokenize(), std::runtime_error);
 }

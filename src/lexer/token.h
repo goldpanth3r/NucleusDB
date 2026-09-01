@@ -22,7 +22,10 @@ enum class TokenType {
 
     EQUAL,
     LESS,
+    LESS_EQUAL,
     GREATER,
+    GREATER_EQUAL,
+    NOT_EQUAL,
 
     LPAREN,
     RPAREN,

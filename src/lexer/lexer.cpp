@@ -112,7 +112,7 @@ std::vector<Token> Lexer::tokenize() {
             tokens.push_back(readString());
             continue;
         }
-        
+
         // Read operators and parentheses.
         switch (current) {
             case '+':
@@ -136,11 +136,36 @@ std::vector<Token> Lexer::tokenize() {
             break;
 
             case '<':
-                tokens.emplace_back(TokenType::LESS, "<");
+                ++position_;
+
+                if (position_ < source_.size() && source_[position_] == '=') {
+                    tokens.emplace_back(TokenType::LESS_EQUAL, "<=");
+                    ++position_;
+                } else {
+                    tokens.emplace_back(TokenType::LESS, "<");
+                }
                 break;
 
             case '>':
-                tokens.emplace_back(TokenType::GREATER, ">");
+                ++position_;
+
+                if (position_ < source_.size() && source_[position_] == '=') {
+                    tokens.emplace_back(TokenType::GREATER_EQUAL, ">=");
+                    ++position_;
+                } else {
+                    tokens.emplace_back(TokenType::GREATER, ">");
+                }
+                break;
+
+            case '!':
+                ++position_;
+
+                if (position_ < source_.size() && source_[position_] == '=') {
+                    tokens.emplace_back(TokenType::NOT_EQUAL, "!=");
+                    ++position_;
+                } else {
+                    throw std::runtime_error("Unexpected character: !");
+                }
                 break;
 
             case '(':
