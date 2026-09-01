@@ -84,20 +84,26 @@ SelectStatement Parser::parseSelect() {
     ++position_;
 
     // Parse WHERE value.
-    if (tokens_[position_].type != TokenType::INTEGER &&
-        tokens_[position_].type != TokenType::STRING &&
-        tokens_[position_].type != TokenType::IDENTIFIER) {
+    Expression whereValue;
+
+    if (tokens_[position_].type == TokenType::INTEGER) {
+        whereValue = {
+            ExpressionType::INTEGER,
+            tokens_[position_].lexeme
+        };
+    } else if (tokens_[position_].type == TokenType::STRING) {
+        whereValue = {
+            ExpressionType::STRING,
+            tokens_[position_].lexeme
+        };
+    } else if (tokens_[position_].type == TokenType::IDENTIFIER) {
+        whereValue = {
+            ExpressionType::IDENTIFIER,
+            tokens_[position_].lexeme
+        };
+    } else {
         throw std::runtime_error("Expected WHERE value");
     }
-
-    Expression whereValue{
-        tokens_[position_].type == TokenType::INTEGER
-            ? ExpressionType::INTEGER
-            : tokens_[position_].type == TokenType::STRING
-                ? ExpressionType::STRING
-                : ExpressionType::IDENTIFIER,
-        tokens_[position_].lexeme
-    };
 
     ++position_;
 
@@ -106,13 +112,17 @@ SelectStatement Parser::parseSelect() {
         throw std::runtime_error("Expected semicolon");
     }
 
-    return SelectStatement{
-        expression,
-        tableName,
+    Condition where{
         whereColumn,
         whereOperator,
         whereValue
     };
+
+    return SelectStatement{
+        expression,
+        tableName,
+        where
+    };
 }
 
-} // namespace nucleusdb
+}

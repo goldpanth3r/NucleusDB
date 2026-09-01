@@ -20,10 +20,10 @@ TEST(ParserTest, ParsesSelectInteger) {
 
     EXPECT_EQ(statement.tableName, "users");
 
-    EXPECT_EQ(statement.whereColumn, "age");
-    EXPECT_EQ(statement.whereOperator, ">");
-    EXPECT_EQ(statement.whereValue.type, ExpressionType::INTEGER);
-    EXPECT_EQ(statement.whereValue.value, "18");
+    EXPECT_EQ(statement.where.column, "age");
+    EXPECT_EQ(statement.where.operatorSymbol, ">");
+    EXPECT_EQ(statement.where.value.type, ExpressionType::INTEGER);
+    EXPECT_EQ(statement.where.value.value, "18");
 }
 
 // Parse SELECT with an identifier.
@@ -41,10 +41,10 @@ TEST(ParserTest, ParsesSelectIdentifier) {
 
     EXPECT_EQ(statement.tableName, "users");
 
-    EXPECT_EQ(statement.whereColumn, "age");
-    EXPECT_EQ(statement.whereOperator, ">=");
-    EXPECT_EQ(statement.whereValue.type, ExpressionType::INTEGER);
-    EXPECT_EQ(statement.whereValue.value, "18");
+    EXPECT_EQ(statement.where.column, "age");
+    EXPECT_EQ(statement.where.operatorSymbol, ">=");
+    EXPECT_EQ(statement.where.value.type, ExpressionType::INTEGER);
+    EXPECT_EQ(statement.where.value.value, "18");
 }
 
 // Parse SELECT with a string condition.
@@ -62,8 +62,8 @@ TEST(ParserTest, ParsesSelectStringCondition) {
 
     EXPECT_EQ(statement.tableName, "users");
 
-    EXPECT_EQ(statement.whereColumn, "name");
-    EXPECT_EQ(statement.whereOperator, "=");
-    EXPECT_EQ(statement.whereValue.type, ExpressionType::STRING);
-    EXPECT_EQ(statement.whereValue.value, "Alice");
+    EXPECT_EQ(statement.where.column, "name");
+    EXPECT_EQ(statement.where.operatorSymbol, "=");
+    EXPECT_EQ(statement.where.value.type, ExpressionType::STRING);
+    EXPECT_EQ(statement.where.value.value, "Alice");
 }
