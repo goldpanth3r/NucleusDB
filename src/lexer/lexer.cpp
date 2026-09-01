@@ -61,6 +61,27 @@ Token Lexer::readWordOrIdentifier() {
     return Token(TokenType::IDENTIFIER, word);
 }
 
+// Read a string.
+Token Lexer::readString() {
+    ++position_;
+
+    const std::size_t start = position_;
+
+    while (position_ < source_.size() && source_[position_] != '\'') {
+        ++position_;
+    }
+
+    if (position_ >= source_.size()) {
+        throw std::runtime_error("Unterminated string");
+    }
+
+    std::string value = source_.substr(start, position_ - start);
+
+    ++position_;
+
+    return Token(TokenType::STRING, value);
+}
+
 // Tokenize the source.
 std::vector<Token> Lexer::tokenize() {
     std::vector<Token> tokens;
@@ -86,6 +107,12 @@ std::vector<Token> Lexer::tokenize() {
             continue;
         }
 
+        // Read a string.
+        if (current == '\'') {
+            tokens.push_back(readString());
+            continue;
+        }
+        
         // Read operators and parentheses.
         switch (current) {
             case '+':

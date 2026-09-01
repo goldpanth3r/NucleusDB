@@ -26,6 +26,9 @@ private:
     // Read an integer.
     Token readInteger();
 
+    // Read a string.
+    Token readString();
+
     // Read a keyword or identifier.
     Token readWordOrIdentifier();
 };

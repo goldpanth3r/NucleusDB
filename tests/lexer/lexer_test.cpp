@@ -46,6 +46,27 @@ TEST(LexerTest, TokenizesIdentifier) {
     EXPECT_EQ(tokens[3].lexeme, "");
 }
 
+// Tokenize a string.
+TEST(LexerTest, TokenizesString) {
+    Lexer lexer("SELECT 'Alice';");
+
+    auto tokens = lexer.tokenize();
+
+    ASSERT_EQ(tokens.size(), 4);
+
+    EXPECT_EQ(tokens[0].type, TokenType::SELECT);
+    EXPECT_EQ(tokens[0].lexeme, "SELECT");
+
+    EXPECT_EQ(tokens[1].type, TokenType::STRING);
+    EXPECT_EQ(tokens[1].lexeme, "Alice");
+
+    EXPECT_EQ(tokens[2].type, TokenType::SEMICOLON);
+    EXPECT_EQ(tokens[2].lexeme, ";");
+
+    EXPECT_EQ(tokens[3].type, TokenType::END_OF_FILE);
+    EXPECT_EQ(tokens[3].lexeme, "");
+}
+
 // Tokenize a SELECT statement.
 TEST(LexerTest, TokenizesSelectFrom) {
     Lexer lexer("SELECT age FROM users;");

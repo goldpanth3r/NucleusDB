@@ -13,6 +13,7 @@ enum class TokenType {
 
     INTEGER,
     IDENTIFIER,
+    STRING,
 
     PLUS,
     MINUS,
