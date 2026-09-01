@@ -27,7 +27,7 @@ private:
     Token readInteger();
 
     // Read a keyword or identifier.
-    Token readWord();
+    Token readWordOrIdentifier();
 };
 
 }

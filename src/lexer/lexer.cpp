@@ -34,11 +34,11 @@ Token Lexer::readInteger() {
 }
 
 // Read a keyword or identifier.
-Token Lexer::readWord() {
+Token Lexer::readWordOrIdentifier() {
     const std::size_t start = position_;
 
     while (position_ < source_.size() &&
-           std::isalpha(static_cast<unsigned char>(source_[position_]))) {
+           std::isalnum(static_cast<unsigned char>(source_[position_]))) {
         ++position_;
     }
 
@@ -48,7 +48,7 @@ Token Lexer::readWord() {
         return Token(TokenType::SELECT, word);
     }
 
-    throw std::runtime_error("Unknown word: " + word);
+    return Token(TokenType::IDENTIFIER, word);
 }
 
 // Tokenize the source.
@@ -72,7 +72,7 @@ std::vector<Token> Lexer::tokenize() {
 
         // Read a keyword.
         if (std::isalpha(static_cast<unsigned char>(current))) {
-            tokens.push_back(readWord());
+            tokens.push_back(readWordOrIdentifier());
             continue;
         }
 

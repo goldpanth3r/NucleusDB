@@ -10,6 +10,7 @@ enum class TokenType {
     SELECT,
 
     INTEGER,
+    IDENTIFIER,
 
     PLUS,
     MINUS,

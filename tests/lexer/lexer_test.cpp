@@ -25,6 +25,21 @@ TEST(LexerTest, TokenizesSelectInteger) {
     EXPECT_EQ(tokens[3].lexeme, "");
 }
 
+// Tokenize an identifier.
+TEST(LexerTest, TokenizesIdentifier) {
+    Lexer lexer("SELECT age;");
+
+    auto tokens = lexer.tokenize();
+
+    ASSERT_EQ(tokens.size(), 4);
+
+    EXPECT_EQ(tokens[0].type, TokenType::SELECT);
+    EXPECT_EQ(tokens[1].type, TokenType::IDENTIFIER);
+    EXPECT_EQ(tokens[1].lexeme, "age");
+    EXPECT_EQ(tokens[2].type, TokenType::SEMICOLON);
+    EXPECT_EQ(tokens[3].type, TokenType::END_OF_FILE);
+}
+
 // Tokenize operators and parentheses.
 TEST(LexerTest, TokenizesOperators) {
     Lexer lexer("SELECT (12 + 35) * 2;");
