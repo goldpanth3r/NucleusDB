@@ -20,10 +20,12 @@ TEST(ParserTest, ParsesSelectInteger) {
 
     EXPECT_EQ(statement.tableName, "users");
 
-    EXPECT_EQ(statement.where.column, "age");
-    EXPECT_EQ(statement.where.operatorSymbol, ">");
-    EXPECT_EQ(statement.where.value.type, ExpressionType::INTEGER);
-    EXPECT_EQ(statement.where.value.value, "18");
+    ASSERT_TRUE(statement.where.has_value());
+
+    EXPECT_EQ(statement.where->column, "age");
+    EXPECT_EQ(statement.where->operatorSymbol, ">");
+    EXPECT_EQ(statement.where->value.type, ExpressionType::INTEGER);
+    EXPECT_EQ(statement.where->value.value, "18");
 }
 
 // Parse SELECT with an identifier.
@@ -41,10 +43,12 @@ TEST(ParserTest, ParsesSelectIdentifier) {
 
     EXPECT_EQ(statement.tableName, "users");
 
-    EXPECT_EQ(statement.where.column, "age");
-    EXPECT_EQ(statement.where.operatorSymbol, ">=");
-    EXPECT_EQ(statement.where.value.type, ExpressionType::INTEGER);
-    EXPECT_EQ(statement.where.value.value, "18");
+    ASSERT_TRUE(statement.where.has_value());
+
+    EXPECT_EQ(statement.where->column, "age");
+    EXPECT_EQ(statement.where->operatorSymbol, ">=");
+    EXPECT_EQ(statement.where->value.type, ExpressionType::INTEGER);
+    EXPECT_EQ(statement.where->value.value, "18");
 }
 
 // Parse SELECT with a string condition.
@@ -62,8 +66,28 @@ TEST(ParserTest, ParsesSelectStringCondition) {
 
     EXPECT_EQ(statement.tableName, "users");
 
-    EXPECT_EQ(statement.where.column, "name");
-    EXPECT_EQ(statement.where.operatorSymbol, "=");
-    EXPECT_EQ(statement.where.value.type, ExpressionType::STRING);
-    EXPECT_EQ(statement.where.value.value, "Alice");
+    ASSERT_TRUE(statement.where.has_value());
+
+    EXPECT_EQ(statement.where->column, "name");
+    EXPECT_EQ(statement.where->operatorSymbol, "=");
+    EXPECT_EQ(statement.where->value.type, ExpressionType::STRING);
+    EXPECT_EQ(statement.where->value.value, "Alice");
+}
+
+// Parse SELECT without WHERE.
+TEST(ParserTest, ParsesSelectWithoutWhere) {
+    Lexer lexer("SELECT age FROM users;");
+
+    auto tokens = lexer.tokenize();
+
+    Parser parser(tokens);
+
+    auto statement = parser.parseSelect();
+
+    EXPECT_EQ(statement.expression.type, ExpressionType::IDENTIFIER);
+    EXPECT_EQ(statement.expression.value, "age");
+
+    EXPECT_EQ(statement.tableName, "users");
+
+    EXPECT_FALSE(statement.where.has_value());
 }

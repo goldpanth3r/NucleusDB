@@ -1,5 +1,6 @@
 #pragma once
 
+#include <optional>
 #include <string>
 
 namespace nucleusdb {
@@ -28,6 +29,7 @@ struct Condition {
 struct SelectStatement {
     Expression expression;
     std::string tableName;
-    Condition where;
+    std::optional<Condition> where;
 };
+
 }

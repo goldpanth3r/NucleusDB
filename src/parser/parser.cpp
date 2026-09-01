@@ -51,72 +51,72 @@ SelectStatement Parser::parseSelect() {
 
     ++position_;
 
-    // Parse WHERE.
-    if (tokens_[position_].type != TokenType::WHERE) {
-        throw std::runtime_error("Expected WHERE");
-    }
+    // Parse WHERE if present.
+    std::optional<Condition> where;
 
-    ++position_;
+    if (tokens_[position_].type == TokenType::WHERE) {
+        ++position_;
 
-    // Parse WHERE column.
-    if (tokens_[position_].type != TokenType::IDENTIFIER) {
-        throw std::runtime_error("Expected WHERE column");
-    }
+        // Parse WHERE column.
+        if (tokens_[position_].type != TokenType::IDENTIFIER) {
+            throw std::runtime_error("Expected WHERE column");
+        }
 
-    std::string whereColumn = tokens_[position_].lexeme;
+        std::string column = tokens_[position_].lexeme;
 
-    ++position_;
+        ++position_;
 
-    // Parse comparison operator.
-    TokenType operatorType = tokens_[position_].type;
+        // Parse comparison operator.
+        TokenType operatorType = tokens_[position_].type;
 
-    if (operatorType != TokenType::EQUAL &&
-        operatorType != TokenType::LESS &&
-        operatorType != TokenType::LESS_EQUAL &&
-        operatorType != TokenType::GREATER &&
-        operatorType != TokenType::GREATER_EQUAL &&
-        operatorType != TokenType::NOT_EQUAL) {
-        throw std::runtime_error("Expected comparison operator");
-    }
+        if (operatorType != TokenType::EQUAL &&
+            operatorType != TokenType::LESS &&
+            operatorType != TokenType::LESS_EQUAL &&
+            operatorType != TokenType::GREATER &&
+            operatorType != TokenType::GREATER_EQUAL &&
+            operatorType != TokenType::NOT_EQUAL) {
+            throw std::runtime_error("Expected comparison operator");
+        }
 
-    std::string whereOperator = tokens_[position_].lexeme;
+        std::string operatorSymbol = tokens_[position_].lexeme;
 
-    ++position_;
+        ++position_;
 
-    // Parse WHERE value.
-    Expression whereValue;
+        // Parse WHERE value.
+        Expression value;
 
-    if (tokens_[position_].type == TokenType::INTEGER) {
-        whereValue = {
-            ExpressionType::INTEGER,
-            tokens_[position_].lexeme
+        if (tokens_[position_].type == TokenType::INTEGER) {
+            value = {
+                ExpressionType::INTEGER,
+                tokens_[position_].lexeme
+            };
+        } else if (tokens_[position_].type == TokenType::STRING) {
+            value = {
+                ExpressionType::STRING,
+                tokens_[position_].lexeme
+            };
+        } else if (tokens_[position_].type == TokenType::IDENTIFIER) {
+            value = {
+                ExpressionType::IDENTIFIER,
+                tokens_[position_].lexeme
+            };
+        } else {
+            throw std::runtime_error("Expected WHERE value");
+        }
+
+        ++position_;
+
+        where = Condition{
+            column,
+            operatorSymbol,
+            value
         };
-    } else if (tokens_[position_].type == TokenType::STRING) {
-        whereValue = {
-            ExpressionType::STRING,
-            tokens_[position_].lexeme
-        };
-    } else if (tokens_[position_].type == TokenType::IDENTIFIER) {
-        whereValue = {
-            ExpressionType::IDENTIFIER,
-            tokens_[position_].lexeme
-        };
-    } else {
-        throw std::runtime_error("Expected WHERE value");
     }
-
-    ++position_;
 
     // Parse semicolon.
     if (tokens_[position_].type != TokenType::SEMICOLON) {
         throw std::runtime_error("Expected semicolon");
     }
-
-    Condition where{
-        whereColumn,
-        whereOperator,
-        whereValue
-    };
 
     return SelectStatement{
         expression,
