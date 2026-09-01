@@ -6,34 +6,37 @@
 
 namespace nucleusdb {
 
-// ExpressionType enumerates the kinds of expressions supported in the select list.
+// ExpressionType enumerates the kinds of expressions.
 enum class ExpressionType {
     INTEGER,
     IDENTIFIER,
     STRING,
-    STAR
+    STAR,
+    BINARY,
+    UNARY
+
 };
 
-// Expression represents a single item in the SELECT list
-// (literal, column name, or *).
+// Expression represents a SQL expression.
 struct Expression {
     ExpressionType type;
     std::string value;
+    std::optional<std::vector<Expression>> children;
 };
 
-// Condition represents a basic WHERE clause of the form:
-//   column <operator> value
+// Condition represents:
+// column <operator> value
 struct Condition {
     std::string column;
     std::string operatorSymbol;
     Expression value;
 };
 
-// SelectStatement holds the result of parsing a SELECT statement.
+// SelectStatement holds a SELECT statement.
 struct SelectStatement {
-    std::vector<Expression> expressions;  // columns / expressions in the SELECT list
-    std::string tableName;                // table specified in the FROM clause
-    std::optional<Condition> where;       // optional WHERE condition
+    std::vector<Expression> expressions;
+    std::string tableName;
+    std::optional<Condition> where;
 };
 
 }
