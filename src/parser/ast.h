@@ -6,6 +6,12 @@
 
 namespace nucleusdb {
 
+    enum class StatementType {
+    SELECT,
+    INSERT
+};
+
+
 // ExpressionType enumerates the kinds of expressions.
 enum class ExpressionType {
     INTEGER,
@@ -37,6 +43,12 @@ struct SelectStatement {
     std::vector<Expression> expressions;
     std::string tableName;
     std::optional<Condition> where;
+};
+
+
+struct InsertStatement {
+    std::string tableName;
+    std::vector<Expression> values;
 };
 
 }

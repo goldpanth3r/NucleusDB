@@ -17,6 +17,8 @@ public:
     // Parses a SELECT statement and returns the corresponding AST node.
     SelectStatement parseSelect();
 
+    InsertStatement parseInsert();
+    
 private:
     const std::vector<Token>& tokens_;
     std::size_t position_ = 0;

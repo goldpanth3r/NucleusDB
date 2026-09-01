@@ -345,3 +345,22 @@ TEST(ParserTest, RejectsUnexpectedClosingParenthesis) {
 
     EXPECT_THROW(parser.parseSelect(), std::runtime_error);
 }
+
+TEST(ParserTest, ParsesInsert) {
+    Lexer lexer("INSERT INTO users VALUES (1, 'Alice');");
+
+    auto tokens = lexer.tokenize();
+    Parser parser(tokens);
+
+    auto statement = parser.parseInsert();
+
+    EXPECT_EQ(statement.tableName, "users");
+
+    ASSERT_EQ(statement.values.size(), 2);
+
+    EXPECT_EQ(statement.values[0].type, ExpressionType::INTEGER);
+    EXPECT_EQ(statement.values[0].value, "1");
+
+    EXPECT_EQ(statement.values[1].type, ExpressionType::STRING);
+    EXPECT_EQ(statement.values[1].value, "Alice");
+}

@@ -9,6 +9,9 @@ namespace nucleusdb {
 enum class TokenType {
     // Keywords
     SELECT,
+    INSERT,
+    INTO,
+    VALUES,
     FROM,
     WHERE,
 

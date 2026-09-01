@@ -8,23 +8,17 @@ namespace nucleusdb {
 Parser::Parser(const std::vector<Token>& tokens)
     : tokens_(tokens) {}
 
-
+// Parses an expression.
 static Expression parseExpression(
     const std::vector<Token>& tokens,
     size_t& position);
 
-// Parse a primary expression.
-//
-// Primary expressions are:
-// INTEGER
-// IDENTIFIER
-// STRING
-// STAR
-// ( expression )
+// Parses a primary expression.
 static Expression parsePrimary(
     const std::vector<Token>& tokens,
     size_t& position) {
 
+    // Parse unary minus.
     if (tokens[position].type == TokenType::MINUS) {
         ++position;
 
@@ -40,10 +34,12 @@ static Expression parsePrimary(
         return unary;
     }
 
+    // Parse parentheses.
     if (tokens[position].type == TokenType::LPAREN) {
         ++position;
 
-        Expression expression = parseExpression(tokens, position);
+        Expression expression =
+            parseExpression(tokens, position);
 
         if (tokens[position].type != TokenType::RPAREN) {
             throw std::runtime_error("Expected ')'");
@@ -54,6 +50,7 @@ static Expression parsePrimary(
         return expression;
     }
 
+    // Parse basic values.
     switch (tokens[position].type) {
         case TokenType::INTEGER:
             return {
@@ -84,22 +81,24 @@ static Expression parsePrimary(
     }
 }
 
-// Parse multiplication and division.
-//
-// * and / have higher precedence than + and -.
+// Parses multiplication and division.
 static Expression parseTerm(
     const std::vector<Token>& tokens,
     size_t& position) {
 
-    Expression left = parsePrimary(tokens, position);
+    Expression left =
+        parsePrimary(tokens, position);
 
     while (tokens[position].type == TokenType::STAR ||
            tokens[position].type == TokenType::SLASH) {
 
-        std::string operatorSymbol = tokens[position].lexeme;
+        std::string operatorSymbol =
+            tokens[position].lexeme;
+
         ++position;
 
-        Expression right = parsePrimary(tokens, position);
+        Expression right =
+            parsePrimary(tokens, position);
 
         Expression binary{
             ExpressionType::BINARY,
@@ -117,22 +116,24 @@ static Expression parseTerm(
     return left;
 }
 
-// Parse addition and subtraction.
-//
-// + and - have lower precedence than * and /.
+// Parses addition and subtraction.
 static Expression parseExpression(
     const std::vector<Token>& tokens,
     size_t& position) {
 
-    Expression left = parseTerm(tokens, position);
+    Expression left =
+        parseTerm(tokens, position);
 
     while (tokens[position].type == TokenType::PLUS ||
            tokens[position].type == TokenType::MINUS) {
 
-        std::string operatorSymbol = tokens[position].lexeme;
+        std::string operatorSymbol =
+            tokens[position].lexeme;
+
         ++position;
 
-        Expression right = parseTerm(tokens, position);
+        Expression right =
+            parseTerm(tokens, position);
 
         Expression binary{
             ExpressionType::BINARY,
@@ -150,11 +151,7 @@ static Expression parseExpression(
     return left;
 }
 
-// Parse a SELECT statement of the form:
-//
-// SELECT <expr> [, <expr>]*
-// FROM <table>
-// [WHERE <column> <op> <value>];
+// Parses a SELECT statement.
 SelectStatement Parser::parseSelect() {
 
     // Consume SELECT.
@@ -192,11 +189,12 @@ SelectStatement Parser::parseSelect() {
         throw std::runtime_error("Expected table name");
     }
 
-    std::string tableName = tokens_[position_].lexeme;
+    std::string tableName =
+        tokens_[position_].lexeme;
 
     ++position_;
 
-    // Optional WHERE clause.
+    // Parse optional WHERE.
     std::optional<Condition> where;
 
     if (tokens_[position_].type == TokenType::WHERE) {
@@ -207,12 +205,14 @@ SelectStatement Parser::parseSelect() {
             throw std::runtime_error("Expected WHERE column");
         }
 
-        std::string column = tokens_[position_].lexeme;
+        std::string column =
+            tokens_[position_].lexeme;
 
         ++position_;
 
         // Parse comparison operator.
-        TokenType operatorType = tokens_[position_].type;
+        TokenType operatorType =
+            tokens_[position_].type;
 
         if (operatorType != TokenType::EQUAL &&
             operatorType != TokenType::LESS &&
@@ -251,6 +251,80 @@ SelectStatement Parser::parseSelect() {
         expressions,
         tableName,
         where
+    };
+}
+
+// Parses an INSERT statement.
+InsertStatement Parser::parseInsert() {
+
+    // Consume INSERT.
+    if (tokens_[position_].type != TokenType::INSERT) {
+        throw std::runtime_error("Expected INSERT");
+    }
+
+    ++position_;
+
+    // Consume INTO.
+    if (tokens_[position_].type != TokenType::INTO) {
+        throw std::runtime_error("Expected INTO");
+    }
+
+    ++position_;
+
+    // Parse table name.
+    if (tokens_[position_].type != TokenType::IDENTIFIER) {
+        throw std::runtime_error("Expected table name");
+    }
+
+    std::string tableName =
+        tokens_[position_].lexeme;
+
+    ++position_;
+
+    // Consume VALUES.
+    if (tokens_[position_].type != TokenType::VALUES) {
+        throw std::runtime_error("Expected VALUES");
+    }
+
+    ++position_;
+
+    // Expect opening parenthesis.
+    if (tokens_[position_].type != TokenType::LPAREN) {
+        throw std::runtime_error("Expected '('");
+    }
+
+    ++position_;
+
+    // Parse values.
+    std::vector<Expression> values;
+
+    values.push_back(
+        parseExpression(tokens_, position_)
+    );
+
+    while (tokens_[position_].type == TokenType::COMMA) {
+        ++position_;
+
+        values.push_back(
+            parseExpression(tokens_, position_)
+        );
+    }
+
+    // Expect closing parenthesis.
+    if (tokens_[position_].type != TokenType::RPAREN) {
+        throw std::runtime_error("Expected ')'");
+    }
+
+    ++position_;
+
+    // Expect semicolon.
+    if (tokens_[position_].type != TokenType::SEMICOLON) {
+        throw std::runtime_error("Expected semicolon");
+    }
+
+    return InsertStatement{
+        tableName,
+        values
     };
 }
 

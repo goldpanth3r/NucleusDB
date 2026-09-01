@@ -334,3 +334,45 @@ TEST(LexerTest, RejectsUnterminatedString) {
     Lexer lexer("SELECT 'Alice;");
     EXPECT_THROW(lexer.tokenize(), std::runtime_error);
 }
+
+// Tokenize INSERT statement.
+TEST(LexerTest, TokenizesInsert) {
+    Lexer lexer("INSERT INTO users VALUES (1, 'Alice');");
+
+    auto tokens = lexer.tokenize();
+
+    ASSERT_EQ(tokens.size(), 11);
+
+    EXPECT_EQ(tokens[0].type, TokenType::INSERT);
+    EXPECT_EQ(tokens[0].lexeme, "INSERT");
+
+    EXPECT_EQ(tokens[1].type, TokenType::INTO);
+    EXPECT_EQ(tokens[1].lexeme, "INTO");
+
+    EXPECT_EQ(tokens[2].type, TokenType::IDENTIFIER);
+    EXPECT_EQ(tokens[2].lexeme, "users");
+
+    EXPECT_EQ(tokens[3].type, TokenType::VALUES);
+    EXPECT_EQ(tokens[3].lexeme, "VALUES");
+
+    EXPECT_EQ(tokens[4].type, TokenType::LPAREN);
+    EXPECT_EQ(tokens[4].lexeme, "(");
+
+    EXPECT_EQ(tokens[5].type, TokenType::INTEGER);
+    EXPECT_EQ(tokens[5].lexeme, "1");
+
+    EXPECT_EQ(tokens[6].type, TokenType::COMMA);
+    EXPECT_EQ(tokens[6].lexeme, ",");
+
+    EXPECT_EQ(tokens[7].type, TokenType::STRING);
+    EXPECT_EQ(tokens[7].lexeme, "Alice");
+
+    EXPECT_EQ(tokens[8].type, TokenType::RPAREN);
+    EXPECT_EQ(tokens[8].lexeme, ")");
+
+    EXPECT_EQ(tokens[9].type, TokenType::SEMICOLON);
+    EXPECT_EQ(tokens[9].lexeme, ";");
+
+    EXPECT_EQ(tokens[10].type, TokenType::END_OF_FILE);
+    EXPECT_EQ(tokens[10].lexeme, "");
+}
