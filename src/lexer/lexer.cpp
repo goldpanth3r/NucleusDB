@@ -44,10 +44,20 @@ Token Lexer::readWordOrIdentifier() {
 
     std::string word = source_.substr(start, position_ - start);
 
+    // Read SELECT keyword.
     if (word == "SELECT") {
         return Token(TokenType::SELECT, word);
     }
 
+    // Read FROM keyword.
+    if (word == "FROM") {
+        return Token(TokenType::FROM, word);
+    }
+
+    // Read WHERE keyword.
+    if (word == "WHERE") {
+        return Token(TokenType::WHERE, word);
+    }
     return Token(TokenType::IDENTIFIER, word);
 }
 
@@ -92,6 +102,18 @@ std::vector<Token> Lexer::tokenize() {
 
             case '/':
                 tokens.emplace_back(TokenType::SLASH, "/");
+                break;
+
+            case '=':
+            tokens.emplace_back(TokenType::EQUAL, "=");
+            break;
+
+            case '<':
+                tokens.emplace_back(TokenType::LESS, "<");
+                break;
+
+            case '>':
+                tokens.emplace_back(TokenType::GREATER, ">");
                 break;
 
             case '(':

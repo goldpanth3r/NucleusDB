@@ -8,6 +8,8 @@ namespace nucleusdb {
 // Token types.
 enum class TokenType {
     SELECT,
+    FROM,
+    WHERE,
 
     INTEGER,
     IDENTIFIER,
@@ -16,6 +18,10 @@ enum class TokenType {
     MINUS,
     STAR,
     SLASH,
+
+    EQUAL,
+    LESS,
+    GREATER,
 
     LPAREN,
     RPAREN,
