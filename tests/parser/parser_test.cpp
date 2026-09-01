@@ -58,3 +58,73 @@ TEST(ParserTest, ParsesWhereClause) {
     EXPECT_EQ(statement.where->operatorSymbol, ">=");
     EXPECT_EQ(statement.where->value.value, "18");
 }
+
+// Reject SELECT without an expression.
+TEST(ParserTest, RejectsMissingExpression) {
+    Lexer lexer("SELECT FROM users;");
+
+    auto tokens = lexer.tokenize();
+    Parser parser(tokens);
+
+    EXPECT_THROW(parser.parseSelect(), std::runtime_error);
+}
+
+// Handle SELECT without FROM.
+TEST(ParserTest, RejectsMissingFrom) {
+    Lexer lexer("SELECT age users;");
+
+    auto tokens = lexer.tokenize();
+    Parser parser(tokens);
+
+    EXPECT_THROW(parser.parseSelect(), std::runtime_error);
+}
+
+// Handle FROM without a table.
+TEST(ParserTest, RejectsMissingTable) {
+    Lexer lexer("SELECT age FROM;");
+
+    auto tokens = lexer.tokenize();
+    Parser parser(tokens);
+
+    EXPECT_THROW(parser.parseSelect(), std::runtime_error);
+}
+
+// Handle WHERE without a condition.
+TEST(ParserTest, RejectsMissingWhereCondition) {
+    Lexer lexer("SELECT age FROM users WHERE;");
+
+    auto tokens = lexer.tokenize();
+    Parser parser(tokens);
+
+    EXPECT_THROW(parser.parseSelect(), std::runtime_error);
+}
+
+// Handle WHERE without an operator.
+TEST(ParserTest, RejectsMissingWhereOperator) {
+    Lexer lexer("SELECT age FROM users WHERE age;");
+
+    auto tokens = lexer.tokenize();
+    Parser parser(tokens);
+
+    EXPECT_THROW(parser.parseSelect(), std::runtime_error);
+}
+
+// Handle WHERE without a value.
+TEST(ParserTest, RejectsMissingWhereValue) {
+    Lexer lexer("SELECT age FROM users WHERE age >;");
+
+    auto tokens = lexer.tokenize();
+    Parser parser(tokens);
+
+    EXPECT_THROW(parser.parseSelect(), std::runtime_error);
+}
+
+// Handle trailing comma in SELECT list.
+TEST(ParserTest, RejectsTrailingComma) {
+    Lexer lexer("SELECT age, FROM users;");
+
+    auto tokens = lexer.tokenize();
+    Parser parser(tokens);
+
+    EXPECT_THROW(parser.parseSelect(), std::runtime_error);
+}
