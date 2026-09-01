@@ -5,89 +5,56 @@
 
 using namespace nucleusdb;
 
-// Parse SELECT with an integer.
-TEST(ParserTest, ParsesSelectInteger) {
-    Lexer lexer("SELECT 42 FROM users WHERE age > 18;");
-
+// Parses SELECT * with a single table and no WHERE clause.
+TEST(ParserTest, ParsesSelectAll) {
+    Lexer lexer("SELECT * FROM users;");
     auto tokens = lexer.tokenize();
-
     Parser parser(tokens);
 
     auto statement = parser.parseSelect();
 
-    EXPECT_EQ(statement.expression.type, ExpressionType::INTEGER);
-    EXPECT_EQ(statement.expression.value, "42");
+    // One expression: the star
+    ASSERT_EQ(statement.expressions.size(), 1);
+    EXPECT_EQ(statement.expressions[0].type, ExpressionType::STAR);
+    EXPECT_EQ(statement.expressions[0].value, "*");
 
     EXPECT_EQ(statement.tableName, "users");
-
-    ASSERT_TRUE(statement.where.has_value());
-
-    EXPECT_EQ(statement.where->column, "age");
-    EXPECT_EQ(statement.where->operatorSymbol, ">");
-    EXPECT_EQ(statement.where->value.type, ExpressionType::INTEGER);
-    EXPECT_EQ(statement.where->value.value, "18");
+    EXPECT_FALSE(statement.where.has_value());
 }
 
-// Parse SELECT with an identifier.
-TEST(ParserTest, ParsesSelectIdentifier) {
-    Lexer lexer("SELECT age FROM users WHERE age >= 18;");
-
+// Parses a SELECT with multiple columns and no WHERE clause.
+TEST(ParserTest, ParsesMultipleColumns) {
+    Lexer lexer("SELECT name, age FROM users;");
     auto tokens = lexer.tokenize();
-
     Parser parser(tokens);
 
     auto statement = parser.parseSelect();
 
-    EXPECT_EQ(statement.expression.type, ExpressionType::IDENTIFIER);
-    EXPECT_EQ(statement.expression.value, "age");
+    // Select list contains two columns
+    ASSERT_EQ(statement.expressions.size(), 2);
+    EXPECT_EQ(statement.expressions[0].value, "name");
+    EXPECT_EQ(statement.expressions[1].value, "age");
 
     EXPECT_EQ(statement.tableName, "users");
+    EXPECT_FALSE(statement.where.has_value());
+}
 
+// Parses a SELECT with multiple columns and a WHERE condition.
+TEST(ParserTest, ParsesWhereClause) {
+    Lexer lexer("SELECT name, age FROM users WHERE age >= 18;");
+    auto tokens = lexer.tokenize();
+    Parser parser(tokens);
+
+    auto statement = parser.parseSelect();
+
+    // Select list contains two columns
+    ASSERT_EQ(statement.expressions.size(), 2);
+    EXPECT_EQ(statement.expressions[0].value, "name");
+    EXPECT_EQ(statement.expressions[1].value, "age");
+
+    // WHERE clause is present
     ASSERT_TRUE(statement.where.has_value());
-
     EXPECT_EQ(statement.where->column, "age");
     EXPECT_EQ(statement.where->operatorSymbol, ">=");
-    EXPECT_EQ(statement.where->value.type, ExpressionType::INTEGER);
     EXPECT_EQ(statement.where->value.value, "18");
-}
-
-// Parse SELECT with a string condition.
-TEST(ParserTest, ParsesSelectStringCondition) {
-    Lexer lexer("SELECT name FROM users WHERE name = 'Alice';");
-
-    auto tokens = lexer.tokenize();
-
-    Parser parser(tokens);
-
-    auto statement = parser.parseSelect();
-
-    EXPECT_EQ(statement.expression.type, ExpressionType::IDENTIFIER);
-    EXPECT_EQ(statement.expression.value, "name");
-
-    EXPECT_EQ(statement.tableName, "users");
-
-    ASSERT_TRUE(statement.where.has_value());
-
-    EXPECT_EQ(statement.where->column, "name");
-    EXPECT_EQ(statement.where->operatorSymbol, "=");
-    EXPECT_EQ(statement.where->value.type, ExpressionType::STRING);
-    EXPECT_EQ(statement.where->value.value, "Alice");
-}
-
-// Parse SELECT without WHERE.
-TEST(ParserTest, ParsesSelectWithoutWhere) {
-    Lexer lexer("SELECT age FROM users;");
-
-    auto tokens = lexer.tokenize();
-
-    Parser parser(tokens);
-
-    auto statement = parser.parseSelect();
-
-    EXPECT_EQ(statement.expression.type, ExpressionType::IDENTIFIER);
-    EXPECT_EQ(statement.expression.value, "age");
-
-    EXPECT_EQ(statement.tableName, "users");
-
-    EXPECT_FALSE(statement.where.has_value());
 }

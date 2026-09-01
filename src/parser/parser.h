@@ -8,13 +8,13 @@
 
 namespace nucleusdb {
 
-// Parses SQL tokens into an AST.
+// Parser converts a sequence of tokens into an abstract syntax tree.
 class Parser {
 public:
-    // Create a parser.
+    // Creates a new Parser from the given token list.
     explicit Parser(const std::vector<Token>& tokens);
 
-    // Parse a SELECT statement.
+    // Parses a SELECT statement and returns the corresponding AST node.
     SelectStatement parseSelect();
 
 private:

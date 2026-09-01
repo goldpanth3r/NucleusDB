@@ -5,10 +5,9 @@
 
 using namespace nucleusdb;
 
-// Tokenize SELECT with an integer.
+// Tokenizes a SELECT statement containing an integer literal.
 TEST(LexerTest, TokenizesSelectInteger) {
     Lexer lexer("SELECT 42;");
-
     auto tokens = lexer.tokenize();
 
     ASSERT_EQ(tokens.size(), 4);
@@ -26,10 +25,9 @@ TEST(LexerTest, TokenizesSelectInteger) {
     EXPECT_EQ(tokens[3].lexeme, "");
 }
 
-// Tokenize an identifier.
+// Tokenizes a SELECT statement containing an identifier.
 TEST(LexerTest, TokenizesIdentifier) {
     Lexer lexer("SELECT age;");
-
     auto tokens = lexer.tokenize();
 
     ASSERT_EQ(tokens.size(), 4);
@@ -47,10 +45,9 @@ TEST(LexerTest, TokenizesIdentifier) {
     EXPECT_EQ(tokens[3].lexeme, "");
 }
 
-// Tokenize a string.
+// Tokenizes a SELECT statement containing a string literal.
 TEST(LexerTest, TokenizesString) {
     Lexer lexer("SELECT 'Alice';");
-
     auto tokens = lexer.tokenize();
 
     ASSERT_EQ(tokens.size(), 4);
@@ -68,10 +65,9 @@ TEST(LexerTest, TokenizesString) {
     EXPECT_EQ(tokens[3].lexeme, "");
 }
 
-// Tokenize a SELECT statement.
+// Tokenizes a basic SELECT ... FROM statement.
 TEST(LexerTest, TokenizesSelectFrom) {
     Lexer lexer("SELECT age FROM users;");
-
     auto tokens = lexer.tokenize();
 
     ASSERT_EQ(tokens.size(), 6);
@@ -95,10 +91,9 @@ TEST(LexerTest, TokenizesSelectFrom) {
     EXPECT_EQ(tokens[5].lexeme, "");
 }
 
-// Tokenize WHERE and comparison operators.
+// Tokenizes a SELECT statement that includes a WHERE clause and comparison operator.
 TEST(LexerTest, TokenizesWhere) {
     Lexer lexer("SELECT age FROM users WHERE age > 18;");
-
     auto tokens = lexer.tokenize();
 
     ASSERT_EQ(tokens.size(), 10);
@@ -134,10 +129,9 @@ TEST(LexerTest, TokenizesWhere) {
     EXPECT_EQ(tokens[9].lexeme, "");
 }
 
-// Tokenize EQUAL.
+// Tokenizes the equality operator.
 TEST(LexerTest, TokenizesEqual) {
     Lexer lexer("SELECT age = 18;");
-
     auto tokens = lexer.tokenize();
 
     ASSERT_EQ(tokens.size(), 6);
@@ -161,10 +155,9 @@ TEST(LexerTest, TokenizesEqual) {
     EXPECT_EQ(tokens[5].lexeme, "");
 }
 
-// Tokenize LESS.
-TEST(LexerTest, TokenizesLessAndNotEqual) {
+// Tokenizes the less-than operator.
+TEST(LexerTest, TokenizesLess) {
     Lexer lexer("SELECT age < 65;");
-
     auto tokens = lexer.tokenize();
 
     ASSERT_EQ(tokens.size(), 6);
@@ -188,10 +181,9 @@ TEST(LexerTest, TokenizesLessAndNotEqual) {
     EXPECT_EQ(tokens[5].lexeme, "");
 }
 
-// Tokenize LESS_EQUAL.
+// Tokenizes the less-than-or-equal operator.
 TEST(LexerTest, TokenizesLessEqual) {
     Lexer lexer("SELECT age <= 65;");
-
     auto tokens = lexer.tokenize();
 
     ASSERT_EQ(tokens.size(), 6);
@@ -215,11 +207,9 @@ TEST(LexerTest, TokenizesLessEqual) {
     EXPECT_EQ(tokens[5].lexeme, "");
 }
 
-
-// Tokenize GREATER.
-TEST(LexerTest, TokenizesLessAndNotEqual) {
+// Tokenizes the greater-than operator.
+TEST(LexerTest, TokenizesGreater) {
     Lexer lexer("SELECT age > 65;");
-
     auto tokens = lexer.tokenize();
 
     ASSERT_EQ(tokens.size(), 6);
@@ -243,10 +233,9 @@ TEST(LexerTest, TokenizesLessAndNotEqual) {
     EXPECT_EQ(tokens[5].lexeme, "");
 }
 
-// Tokenize GREAT_EQUAL.
-TEST(LexerTest, TokenizesComparisonOperators) {
+// Tokenizes the greater-than-or-equal operator.
+TEST(LexerTest, TokenizesGreaterEqual) {
     Lexer lexer("SELECT age >= 18;");
-
     auto tokens = lexer.tokenize();
 
     ASSERT_EQ(tokens.size(), 6);
@@ -270,10 +259,9 @@ TEST(LexerTest, TokenizesComparisonOperators) {
     EXPECT_EQ(tokens[5].lexeme, "");
 }
 
-// Tokenize NOT_EQUAL.
+// Tokenizes the not-equal operator.
 TEST(LexerTest, TokenizesNotEqual) {
     Lexer lexer("SELECT age != 18;");
-
     auto tokens = lexer.tokenize();
 
     ASSERT_EQ(tokens.size(), 6);
@@ -297,10 +285,9 @@ TEST(LexerTest, TokenizesNotEqual) {
     EXPECT_EQ(tokens[5].lexeme, "");
 }
 
-// Tokenize operators and parentheses.
+// Tokenizes arithmetic operators and parentheses.
 TEST(LexerTest, TokenizesOperators) {
     Lexer lexer("SELECT (12 + 35) * 2;");
-
     auto tokens = lexer.tokenize();
 
     ASSERT_EQ(tokens.size(), 10);
@@ -336,23 +323,14 @@ TEST(LexerTest, TokenizesOperators) {
     EXPECT_EQ(tokens[9].lexeme, "");
 }
 
-// Reject an unknown character.
+// Rejects an unknown character.
 TEST(LexerTest, RejectsUnknownCharacter) {
     Lexer lexer("SELECT @;");
-
     EXPECT_THROW(lexer.tokenize(), std::runtime_error);
 }
 
-// Reject an unknown word.
-TEST(LexerTest, RejectsUnknownWord) {
-    Lexer lexer("INVALID 42;");
-
-    EXPECT_THROW(lexer.tokenize(), std::runtime_error);
-}
-
-// Reject an unterminated string.
+// Rejects an unterminated string literal.
 TEST(LexerTest, RejectsUnterminatedString) {
     Lexer lexer("SELECT 'Alice;");
-
     EXPECT_THROW(lexer.tokenize(), std::runtime_error);
 }

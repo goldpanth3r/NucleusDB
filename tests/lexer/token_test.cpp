@@ -4,7 +4,7 @@
 
 using namespace nucleusdb;
 
-// Create an integer token.
+// Creates an INTEGER token and verifies its type and lexeme.
 TEST(TokenTest, CreatesIntegerToken) {
     Token token(TokenType::INTEGER, "42");
 
