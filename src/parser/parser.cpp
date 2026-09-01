@@ -255,6 +255,7 @@ SelectStatement Parser::parseSelect() {
 }
 
 // Parses an INSERT statement.
+// Parses an INSERT statement.
 InsertStatement Parser::parseInsert() {
 
     // Consume INSERT.
@@ -280,6 +281,46 @@ InsertStatement Parser::parseInsert() {
         tokens_[position_].lexeme;
 
     ++position_;
+
+    // Parse optional column list.
+    std::vector<std::string> columns;
+
+    if (tokens_[position_].type == TokenType::LPAREN) {
+        ++position_;
+
+        // Parse first column.
+        if (tokens_[position_].type != TokenType::IDENTIFIER) {
+            throw std::runtime_error("Expected column name");
+        }
+
+        columns.push_back(
+            tokens_[position_].lexeme
+        );
+
+        ++position_;
+
+        // Parse additional columns.
+        while (tokens_[position_].type == TokenType::COMMA) {
+            ++position_;
+
+            if (tokens_[position_].type != TokenType::IDENTIFIER) {
+                throw std::runtime_error("Expected column name");
+            }
+
+            columns.push_back(
+                tokens_[position_].lexeme
+            );
+
+            ++position_;
+        }
+
+        // Expect closing parenthesis.
+        if (tokens_[position_].type != TokenType::RPAREN) {
+            throw std::runtime_error("Expected ')'");
+        }
+
+        ++position_;
+    }
 
     // Consume VALUES.
     if (tokens_[position_].type != TokenType::VALUES) {
@@ -317,6 +358,15 @@ InsertStatement Parser::parseInsert() {
 
     ++position_;
 
+    // Check column and value counts.
+    if (!columns.empty() &&
+        columns.size() != values.size()) {
+        throw std::runtime_error(
+            "Column count does not match value count"
+        );
+    }
+
+
     // Expect semicolon.
     if (tokens_[position_].type != TokenType::SEMICOLON) {
         throw std::runtime_error("Expected semicolon");
@@ -324,6 +374,7 @@ InsertStatement Parser::parseInsert() {
 
     return InsertStatement{
         tableName,
+        columns,
         values
     };
 }

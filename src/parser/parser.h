@@ -1,7 +1,7 @@
 #pragma once
 
-#include <vector>
 #include <optional>
+#include <vector>
 
 #include "lexer/token.h"
 #include "parser/ast.h"
@@ -17,8 +17,9 @@ public:
     // Parses a SELECT statement and returns the corresponding AST node.
     SelectStatement parseSelect();
 
+    // Parses an INSERT statement and returns the corresponding AST node.
     InsertStatement parseInsert();
-    
+
 private:
     const std::vector<Token>& tokens_;
     std::size_t position_ = 0;

@@ -364,3 +364,222 @@ TEST(ParserTest, ParsesInsert) {
     EXPECT_EQ(statement.values[1].type, ExpressionType::STRING);
     EXPECT_EQ(statement.values[1].value, "Alice");
 }
+
+// Parse INSERT with explicit columns.
+TEST(ParserTest, ParsesInsertWithColumns) {
+    Lexer lexer(
+        "INSERT INTO users (id, name) VALUES (1, 'Alice');"
+    );
+
+    auto tokens = lexer.tokenize();
+
+    Parser parser(tokens);
+
+    auto statement = parser.parseInsert();
+
+    EXPECT_EQ(statement.tableName, "users");
+
+    ASSERT_EQ(statement.columns.size(), 2);
+    EXPECT_EQ(statement.columns[0], "id");
+    EXPECT_EQ(statement.columns[1], "name");
+
+    ASSERT_EQ(statement.values.size(), 2);
+
+    EXPECT_EQ(statement.values[0].type, ExpressionType::INTEGER);
+    EXPECT_EQ(statement.values[0].value, "1");
+
+    EXPECT_EQ(statement.values[1].type, ExpressionType::STRING);
+    EXPECT_EQ(statement.values[1].value, "Alice");
+}
+
+// Reject INSERT when there are fewer values than columns.
+TEST(ParserTest, RejectsInsertColumnValueMismatch) {
+    Lexer lexer(
+        "INSERT INTO users (id, name) VALUES (1);"
+    );
+
+    auto tokens = lexer.tokenize();
+
+    Parser parser(tokens);
+
+    EXPECT_THROW(
+        parser.parseInsert(),
+        std::runtime_error
+    );
+}
+
+// Reject INSERT when there are more values than columns.
+TEST(ParserTest, RejectsInsertTooManyValues) {
+    Lexer lexer(
+        "INSERT INTO users (id) VALUES (1, 'Alice');"
+    );
+
+    auto tokens = lexer.tokenize();
+
+    Parser parser(tokens);
+
+    EXPECT_THROW(
+        parser.parseInsert(),
+        std::runtime_error
+    );
+}
+
+// Reject INSERT without INTO.
+TEST(ParserTest, RejectsInsertMissingInto) {
+    Lexer lexer(
+        "INSERT users VALUES (1);"
+    );
+
+    auto tokens = lexer.tokenize();
+
+    Parser parser(tokens);
+
+    EXPECT_THROW(
+        parser.parseInsert(),
+        std::runtime_error
+    );
+}
+
+// Reject INSERT without table name.
+TEST(ParserTest, RejectsInsertMissingTable) {
+    Lexer lexer(
+        "INSERT INTO VALUES (1);"
+    );
+
+    auto tokens = lexer.tokenize();
+
+    Parser parser(tokens);
+
+    EXPECT_THROW(
+        parser.parseInsert(),
+        std::runtime_error
+    );
+}
+
+// Reject INSERT without VALUES.
+TEST(ParserTest, RejectsInsertMissingValues) {
+    Lexer lexer(
+        "INSERT INTO users (id) (1);"
+    );
+
+    auto tokens = lexer.tokenize();
+
+    Parser parser(tokens);
+
+    EXPECT_THROW(
+        parser.parseInsert(),
+        std::runtime_error
+    );
+}
+
+// Reject INSERT without opening parenthesis.
+TEST(ParserTest, RejectsInsertMissingOpeningParenthesis) {
+    Lexer lexer(
+        "INSERT INTO users VALUES 1);"
+    );
+
+    auto tokens = lexer.tokenize();
+
+    Parser parser(tokens);
+
+    EXPECT_THROW(
+        parser.parseInsert(),
+        std::runtime_error
+    );
+}
+
+// Reject INSERT without closing parenthesis.
+TEST(ParserTest, RejectsInsertMissingClosingParenthesis) {
+    Lexer lexer(
+        "INSERT INTO users VALUES (1;"
+    );
+
+    auto tokens = lexer.tokenize();
+
+    Parser parser(tokens);
+
+    EXPECT_THROW(
+        parser.parseInsert(),
+        std::runtime_error
+    );
+}
+
+// Reject INSERT without semicolon.
+TEST(ParserTest, RejectsInsertMissingSemicolon) {
+    Lexer lexer(
+        "INSERT INTO users VALUES (1)"
+    );
+
+    auto tokens = lexer.tokenize();
+
+    Parser parser(tokens);
+
+    EXPECT_THROW(
+        parser.parseInsert(),
+        std::runtime_error
+    );
+}
+
+// Reject INSERT with a trailing comma in values.
+TEST(ParserTest, RejectsInsertTrailingValueComma) {
+    Lexer lexer(
+        "INSERT INTO users VALUES (1,);"
+    );
+
+    auto tokens = lexer.tokenize();
+
+    Parser parser(tokens);
+
+    EXPECT_THROW(
+        parser.parseInsert(),
+        std::runtime_error
+    );
+}
+
+// Reject INSERT with a trailing comma in columns.
+TEST(ParserTest, RejectsInsertTrailingColumnComma) {
+    Lexer lexer(
+        "INSERT INTO users (id, name,) VALUES (1, 'Alice');"
+    );
+
+    auto tokens = lexer.tokenize();
+
+    Parser parser(tokens);
+
+    EXPECT_THROW(
+        parser.parseInsert(),
+        std::runtime_error
+    );
+}
+
+// Reject INSERT with empty values.
+TEST(ParserTest, RejectsInsertEmptyValues) {
+    Lexer lexer(
+        "INSERT INTO users VALUES ();"
+    );
+
+    auto tokens = lexer.tokenize();
+
+    Parser parser(tokens);
+
+    EXPECT_THROW(
+        parser.parseInsert(),
+        std::runtime_error
+    );
+}
+
+// Reject INSERT with empty column list.
+TEST(ParserTest, RejectsInsertEmptyColumns) {
+    Lexer lexer(
+        "INSERT INTO users () VALUES (1);"
+    );
+
+    auto tokens = lexer.tokenize();
+
+    Parser parser(tokens);
+
+    EXPECT_THROW(
+        parser.parseInsert(),
+        std::runtime_error
+    );
+}
