@@ -161,6 +161,33 @@ TEST(LexerTest, TokenizesEqual) {
     EXPECT_EQ(tokens[5].lexeme, "");
 }
 
+// Tokenize LESS.
+TEST(LexerTest, TokenizesLessAndNotEqual) {
+    Lexer lexer("SELECT age < 65;");
+
+    auto tokens = lexer.tokenize();
+
+    ASSERT_EQ(tokens.size(), 6);
+
+    EXPECT_EQ(tokens[0].type, TokenType::SELECT);
+    EXPECT_EQ(tokens[0].lexeme, "SELECT");
+
+    EXPECT_EQ(tokens[1].type, TokenType::IDENTIFIER);
+    EXPECT_EQ(tokens[1].lexeme, "age");
+
+    EXPECT_EQ(tokens[2].type, TokenType::LESS);
+    EXPECT_EQ(tokens[2].lexeme, "<");
+
+    EXPECT_EQ(tokens[3].type, TokenType::INTEGER);
+    EXPECT_EQ(tokens[3].lexeme, "65");
+
+    EXPECT_EQ(tokens[4].type, TokenType::SEMICOLON);
+    EXPECT_EQ(tokens[4].lexeme, ";");
+
+    EXPECT_EQ(tokens[5].type, TokenType::END_OF_FILE);
+    EXPECT_EQ(tokens[5].lexeme, "");
+}
+
 // Tokenize LESS_EQUAL.
 TEST(LexerTest, TokenizesLessEqual) {
     Lexer lexer("SELECT age <= 65;");
@@ -177,6 +204,34 @@ TEST(LexerTest, TokenizesLessEqual) {
 
     EXPECT_EQ(tokens[2].type, TokenType::LESS_EQUAL);
     EXPECT_EQ(tokens[2].lexeme, "<=");
+
+    EXPECT_EQ(tokens[3].type, TokenType::INTEGER);
+    EXPECT_EQ(tokens[3].lexeme, "65");
+
+    EXPECT_EQ(tokens[4].type, TokenType::SEMICOLON);
+    EXPECT_EQ(tokens[4].lexeme, ";");
+
+    EXPECT_EQ(tokens[5].type, TokenType::END_OF_FILE);
+    EXPECT_EQ(tokens[5].lexeme, "");
+}
+
+
+// Tokenize GREATER.
+TEST(LexerTest, TokenizesLessAndNotEqual) {
+    Lexer lexer("SELECT age > 65;");
+
+    auto tokens = lexer.tokenize();
+
+    ASSERT_EQ(tokens.size(), 6);
+
+    EXPECT_EQ(tokens[0].type, TokenType::SELECT);
+    EXPECT_EQ(tokens[0].lexeme, "SELECT");
+
+    EXPECT_EQ(tokens[1].type, TokenType::IDENTIFIER);
+    EXPECT_EQ(tokens[1].lexeme, "age");
+
+    EXPECT_EQ(tokens[2].type, TokenType::GREATER);
+    EXPECT_EQ(tokens[2].lexeme, ">");
 
     EXPECT_EQ(tokens[3].type, TokenType::INTEGER);
     EXPECT_EQ(tokens[3].lexeme, "65");
@@ -207,60 +262,6 @@ TEST(LexerTest, TokenizesComparisonOperators) {
 
     EXPECT_EQ(tokens[3].type, TokenType::INTEGER);
     EXPECT_EQ(tokens[3].lexeme, "18");
-
-    EXPECT_EQ(tokens[4].type, TokenType::SEMICOLON);
-    EXPECT_EQ(tokens[4].lexeme, ";");
-
-    EXPECT_EQ(tokens[5].type, TokenType::END_OF_FILE);
-    EXPECT_EQ(tokens[5].lexeme, "");
-}
-
-// Tokenize LESS.
-TEST(LexerTest, TokenizesLessAndNotEqual) {
-    Lexer lexer("SELECT age < 65;");
-
-    auto tokens = lexer.tokenize();
-
-    ASSERT_EQ(tokens.size(), 6);
-
-    EXPECT_EQ(tokens[0].type, TokenType::SELECT);
-    EXPECT_EQ(tokens[0].lexeme, "SELECT");
-
-    EXPECT_EQ(tokens[1].type, TokenType::IDENTIFIER);
-    EXPECT_EQ(tokens[1].lexeme, "age");
-
-    EXPECT_EQ(tokens[2].type, TokenType::LESS);
-    EXPECT_EQ(tokens[2].lexeme, "<");
-
-    EXPECT_EQ(tokens[3].type, TokenType::INTEGER);
-    EXPECT_EQ(tokens[3].lexeme, "65");
-
-    EXPECT_EQ(tokens[4].type, TokenType::SEMICOLON);
-    EXPECT_EQ(tokens[4].lexeme, ";");
-
-    EXPECT_EQ(tokens[5].type, TokenType::END_OF_FILE);
-    EXPECT_EQ(tokens[5].lexeme, "");
-}
-
-// Tokenize GREATER.
-TEST(LexerTest, TokenizesLessAndNotEqual) {
-    Lexer lexer("SELECT age > 65;");
-
-    auto tokens = lexer.tokenize();
-
-    ASSERT_EQ(tokens.size(), 6);
-
-    EXPECT_EQ(tokens[0].type, TokenType::SELECT);
-    EXPECT_EQ(tokens[0].lexeme, "SELECT");
-
-    EXPECT_EQ(tokens[1].type, TokenType::IDENTIFIER);
-    EXPECT_EQ(tokens[1].lexeme, "age");
-
-    EXPECT_EQ(tokens[2].type, TokenType::GREATER);
-    EXPECT_EQ(tokens[2].lexeme, ">");
-
-    EXPECT_EQ(tokens[3].type, TokenType::INTEGER);
-    EXPECT_EQ(tokens[3].lexeme, "65");
 
     EXPECT_EQ(tokens[4].type, TokenType::SEMICOLON);
     EXPECT_EQ(tokens[4].lexeme, ";");
