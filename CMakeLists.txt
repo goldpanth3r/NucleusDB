@@ -32,10 +32,13 @@ add_executable(nucleusdb_tests
     tests/lexer/lexer_test.cpp
     tests/parser/parser_test.cpp
     tests/storage/table_test.cpp
-    
+    tests/storage/database_test.cpp
+
     src/lexer/lexer.cpp
     src/parser/parser.cpp
     src/storage/table.cpp
+    src/storage/database.cpp
+
 )
 
 target_link_libraries(nucleusdb_tests
