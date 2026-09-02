@@ -14,6 +14,9 @@ public:
     // Executes a CREATE TABLE statement.
     void execute(const CreateTableStatement& statement);
 
+    // Executes an INSERT statement.
+    void execute(const InsertStatement& statement);
+
 private:
     Database& database_;
 };
