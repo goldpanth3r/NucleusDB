@@ -33,11 +33,13 @@ add_executable(nucleusdb_tests
     tests/parser/parser_test.cpp
     tests/storage/table_test.cpp
     tests/storage/database_test.cpp
+    tests/execution/executor_test.cpp
 
     src/lexer/lexer.cpp
     src/parser/parser.cpp
     src/storage/table.cpp
     src/storage/database.cpp
+    src/execution/executor.cpp
 
 )
 
