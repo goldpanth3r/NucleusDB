@@ -376,3 +376,36 @@ TEST(LexerTest, TokenizesInsert) {
     EXPECT_EQ(tokens[10].type, TokenType::END_OF_FILE);
     EXPECT_EQ(tokens[10].lexeme, "");
 }
+
+// Tokenize CREATE TABLE.
+TEST(LexerTest, TokenizesCreateTable) {
+    Lexer lexer("CREATE TABLE users (id, name);");
+
+    auto tokens = lexer.tokenize();
+
+    ASSERT_EQ(tokens.size(), 10);
+
+    EXPECT_EQ(tokens[0].type, TokenType::CREATE);
+    EXPECT_EQ(tokens[0].lexeme, "CREATE");
+
+    EXPECT_EQ(tokens[1].type, TokenType::TABLE);
+    EXPECT_EQ(tokens[1].lexeme, "TABLE");
+
+    EXPECT_EQ(tokens[2].type, TokenType::IDENTIFIER);
+    EXPECT_EQ(tokens[2].lexeme, "users");
+
+    EXPECT_EQ(tokens[3].type, TokenType::LPAREN);
+    EXPECT_EQ(tokens[4].type, TokenType::IDENTIFIER);
+    EXPECT_EQ(tokens[4].lexeme, "id");
+
+    EXPECT_EQ(tokens[5].type, TokenType::COMMA);
+
+    EXPECT_EQ(tokens[6].type, TokenType::IDENTIFIER);
+    EXPECT_EQ(tokens[6].lexeme, "name");
+
+    EXPECT_EQ(tokens[7].type, TokenType::RPAREN);
+    EXPECT_EQ(tokens[8].type, TokenType::SEMICOLON);
+
+    EXPECT_EQ(tokens[9].type, TokenType::END_OF_FILE);
+    EXPECT_EQ(tokens[9].lexeme, "");
+}

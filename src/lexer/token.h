@@ -10,7 +10,9 @@ enum class TokenType {
     // Keywords
     SELECT,
     INSERT,
+    CREATE,
     INTO,
+    TABLE,
     VALUES,
     FROM,
     WHERE,

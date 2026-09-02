@@ -582,4 +582,73 @@ TEST(ParserTest, RejectsInsertEmptyColumns) {
         parser.parseInsert(),
         std::runtime_error
     );
+
+}
+
+// Parse CREATE TABLE.
+TEST(ParserTest, ParsesCreateTable) {
+    Lexer lexer(
+        "CREATE TABLE users (id, name);"
+    );
+
+    auto tokens = lexer.tokenize();
+    Parser parser(tokens);
+
+    auto statement = parser.parseCreateTable();
+
+    EXPECT_EQ(statement.tableName, "users");
+
+    ASSERT_EQ(statement.columns.size(), 2);
+    EXPECT_EQ(statement.columns[0], "id");
+    EXPECT_EQ(statement.columns[1], "name");
+}
+
+// Reject CREATE without TABLE.
+TEST(ParserTest, RejectsCreateMissingTableKeyword) {
+    Lexer lexer("CREATE users (id);");
+
+    auto tokens = lexer.tokenize();
+    Parser parser(tokens);
+
+    EXPECT_THROW(parser.parseCreateTable(), std::runtime_error);
+}
+
+// Reject CREATE without table name.
+TEST(ParserTest, RejectsCreateMissingTableName) {
+    Lexer lexer("CREATE TABLE (id);");
+
+    auto tokens = lexer.tokenize();
+    Parser parser(tokens);
+
+    EXPECT_THROW(parser.parseCreateTable(), std::runtime_error);
+}
+
+// Reject CREATE with empty column list.
+TEST(ParserTest, RejectsCreateEmptyColumns) {
+    Lexer lexer("CREATE TABLE users ();");
+
+    auto tokens = lexer.tokenize();
+    Parser parser(tokens);
+
+    EXPECT_THROW(parser.parseCreateTable(), std::runtime_error);
+}
+
+// Reject CREATE with trailing comma.
+TEST(ParserTest, RejectsCreateTrailingComma) {
+    Lexer lexer("CREATE TABLE users (id, name,);");
+
+    auto tokens = lexer.tokenize();
+    Parser parser(tokens);
+
+    EXPECT_THROW(parser.parseCreateTable(), std::runtime_error);
+}
+
+// Reject CREATE without semicolon.
+TEST(ParserTest, RejectsCreateMissingSemicolon) {
+    Lexer lexer("CREATE TABLE users (id, name)");
+
+    auto tokens = lexer.tokenize();
+    Parser parser(tokens);
+
+    EXPECT_THROW(parser.parseCreateTable(), std::runtime_error);
 }

@@ -50,6 +50,10 @@ Token Lexer::readWordOrIdentifier() {
         return Token(TokenType::SELECT, word);
     }
 
+    if (word == "CREATE") {
+        return Token(TokenType::CREATE, word);
+    }
+
     if (word == "FROM") {
         return Token(TokenType::FROM, word);
     }
@@ -66,6 +70,10 @@ Token Lexer::readWordOrIdentifier() {
         return Token(TokenType::INTO, word);
     }
 
+    if (word == "TABLE") {
+        return Token(TokenType::TABLE, word);
+    }
+    
     if (word == "VALUES") {
         return Token(TokenType::VALUES, word);
     }

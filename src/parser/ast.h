@@ -9,7 +9,9 @@ namespace nucleusdb {
 // StatementType enumerates the kinds of SQL statements.
 enum class StatementType {
     SELECT,
-    INSERT
+    INSERT,
+    CREATE_TABLE
+
 };
 
 // ExpressionType enumerates the kinds of expressions.
@@ -49,6 +51,12 @@ struct InsertStatement {
     std::string tableName;
     std::vector<std::string> columns;
     std::vector<Expression> values;
+};
+
+// CreateTableStatement holds a CREATE TABLE statement.
+struct CreateTableStatement {
+    std::string tableName;
+    std::vector<std::string> columns;
 };
 
 }

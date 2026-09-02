@@ -379,4 +379,76 @@ InsertStatement Parser::parseInsert() {
     };
 }
 
+// Parses a CREATE TABLE statement.
+CreateTableStatement Parser::parseCreateTable() {
+
+    // Consume CREATE.
+    if (tokens_[position_].type != TokenType::CREATE) {
+        throw std::runtime_error("Expected CREATE");
+    }
+
+    ++position_;
+
+    // Consume TABLE.
+    if (tokens_[position_].type != TokenType::TABLE) {
+        throw std::runtime_error("Expected TABLE");
+    }
+
+    ++position_;
+
+    // Parse table name.
+    if (tokens_[position_].type != TokenType::IDENTIFIER) {
+        throw std::runtime_error("Expected table name");
+    }
+
+    std::string tableName = tokens_[position_].lexeme;
+    ++position_;
+
+    // Expect opening parenthesis.
+    if (tokens_[position_].type != TokenType::LPAREN) {
+        throw std::runtime_error("Expected '('");
+    }
+
+    ++position_;
+
+    // Parse first column.
+    if (tokens_[position_].type != TokenType::IDENTIFIER) {
+        throw std::runtime_error("Expected column name");
+    }
+
+    std::vector<std::string> columns;
+
+    columns.push_back(tokens_[position_].lexeme);
+    ++position_;
+
+    // Parse additional columns.
+    while (tokens_[position_].type == TokenType::COMMA) {
+        ++position_;
+
+        if (tokens_[position_].type != TokenType::IDENTIFIER) {
+            throw std::runtime_error("Expected column name");
+        }
+
+        columns.push_back(tokens_[position_].lexeme);
+        ++position_;
+    }
+
+    // Expect closing parenthesis.
+    if (tokens_[position_].type != TokenType::RPAREN) {
+        throw std::runtime_error("Expected ')'");
+    }
+
+    ++position_;
+
+    // Expect semicolon.
+    if (tokens_[position_].type != TokenType::SEMICOLON) {
+        throw std::runtime_error("Expected semicolon");
+    }
+
+    return CreateTableStatement{
+        tableName,
+        columns
+    };
+}
+
 }

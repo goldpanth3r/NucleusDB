@@ -20,6 +20,9 @@ public:
     // Parses an INSERT statement and returns the corresponding AST node.
     InsertStatement parseInsert();
 
+    // Parses a CREATE TABLE statement and returns the corresponding AST node.
+    CreateTableStatement parseCreateTable();
+
 private:
     const std::vector<Token>& tokens_;
     std::size_t position_ = 0;
